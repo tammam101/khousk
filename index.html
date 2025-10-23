@@ -3,6 +3,66 @@
   <head>
     <meta charset="utf-8">
     <title>AR 3D QR Cube</title>
+<style> 
+body {
+    background-color: rgb(4, 58, 94); }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            --gold-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.3);
+            --border-radius: 15px;
+            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+            
+            .fancy-btn {
+                position: relative;
+                overflow: hidden;
+            }
+        
+interactive-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 3rem 0;
+        }
+
+
+.fancy-btn {
+    position: relative;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    overflow: hidden;
+    color: white;
+}
+
+.btn-glass {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+</style>
+
+<a class="fancy-btn btn-glass" href="https://www.instagram.com/t.__x" target="_self">instagram</a>
+<a class="fancy-btn btn-glass" mailto="tammamosama101@gmail.com" target="_self">E-mail</a>
+
     <!-- مكتبات A-Frame و AR.js -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
@@ -19,10 +79,10 @@
         <a-entity 
           id="model"
           gltf-model="connor_rk900_-_detroit_become_human.glb" 
-          scale="5 5 5"
-          rotation="0 0 0"
+          scale="0.5 0.5 0.5"
+          rotation="0 45 0"
           animation="property: rotation; to: 0 405 0; loop: true; dur: 4000"
-          position="0 0 0"
+          position="0 90 0"
           class="clickable">
         </a-entity>
 
@@ -44,4 +104,3 @@
     </script>
   </body>
 </html>
-
