@@ -3,8 +3,6 @@
   <head>
     <meta charset="utf-8" />
     <title>AR 3D Connor RK900</title>
-
-    <!-- 🎨 التنسيق العام -->
     <style>
       body {
         margin: 0;
@@ -20,7 +18,7 @@
         --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
 
-      /* 🌐 أزرار الواجهة الزجاجية */
+      /* 🔷 أزرار فاخرة */
       .ui-buttons {
         position: fixed;
         top: 20px;
@@ -56,41 +54,48 @@
       }
     </style>
 
-    <!-- 📦 مكتبات A-Frame و AR.js -->
+    <!-- مكتبات -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
   </head>
 
   <body>
-    <!-- 🌐 أزرار التحكم -->
+    <!-- 🧊 أزرار الشاشة -->
     <div class="ui-buttons">
-      <a class="fancy-btn" href="https://www.instagram.com/t.__x" target="_blank" rel="noopener noreferrer">
-        Instagram
-      </a>
-      <a class="fancy-btn" href="mailto:tammamosama101@gmail.com">
-        E-mail
-      </a>
+      <a class="fancy-btn" href="https://www.instagram.com/t.__x" target="_blank">Instagram</a>
+      <a class="fancy-btn" href="mailto:tammamosama101@gmail.com">E-mail</a>
     </div>
 
-    <!-- 🎯 مشهد الواقع المعزز -->
+    <!-- 🧩 مشهد AR -->
     <a-scene
       embedded
+      arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; detectionMode: mono;"
       vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono;"
+      renderer="logarithmicDepthBuffer: true; antialias: true;"
     >
-      <!-- تحميل المجسم -->
       <a-assets>
         <a-asset-item id="modelAsset" src="connor_rk900_-_detroit_become_human.glb"></a-asset-item>
       </a-assets>
 
       <!-- الماركر -->
-      <a-marker id="marker" type="pattern" url="marker.patt">
+      <a-marker
+        id="marker"
+        type="pattern"
+        url="marker.patt"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance="0.01"
+        smoothThreshold="5"
+        emitevents="true"
+        hide-on-lost="false"
+      >
+        <!-- المجسم مثبت على الماركر الحقيقي -->
         <a-entity
           id="model"
           gltf-model="#modelAsset"
-          position="0 -1 -1"
+          position="0 0 0"
           rotation="0 180 0"
-          scale="0.009 0.009 0.009"
+          scale="0.25 0.25 0.25"
           animation-mixer
         ></a-entity>
       </a-marker>
@@ -99,29 +104,20 @@
       <a-entity camera></a-entity>
     </a-scene>
 
-    <!-- 🔧 تثبيت المجسم بعد ظهور الماركر -->
     <script>
       const marker = document.querySelector("#marker");
       const model = document.querySelector("#model");
-      let modelFixed = false;
 
+      // المجسم ما يختفي لو فقدنا الماركر
       marker.addEventListener("markerFound", () => {
-        if (!modelFixed) {
-          // أخذ موقع الماركر والاحتفاظ به
-          const scene = document.querySelector("a-scene");
-          const pos = marker.object3D.position.clone();
-          const rot = marker.object3D.rotation.clone();
+        console.log("✅ Marker found: Model visible and locked in place.");
+        model.setAttribute("visible", true);
+      });
 
-          scene.object3D.add(model.object3D);
-          model.object3D.position.copy(pos);
-          model.object3D.rotation.copy(rot);
-
-          modelFixed = true;
-          console.log("✅ Model fixed at marker position and animation active.");
-        }
+      marker.addEventListener("markerLost", () => {
+        console.log("⚠ Marker lost: Model stays in the same real-world position.");
+        // يبقى ظاهر بنفس موقع آخر مرة انشاف بيها الماركر
       });
     </script>
   </body>
 </html>
-
-
