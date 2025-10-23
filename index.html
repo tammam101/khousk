@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>AR 3D QR Cube</title>
+    <!-- مكتبات A-Frame و AR.js -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
+  </head>
+
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+      
+      <!-- الماركر (الـ QR أو العلامة) -->
+      <!-- يمكنك تغييره لاحقاً حسب الكود الخاص بك -->
+      <a-marker type="pattern" url="marker.patt">
+
+        <!-- المجسم 3D -->
+        <a-entity 
+          id="model"
+          gltf-model="model.glb" 
+          scale="0.5 0.5 0.5"
+          rotation="0 45 0"
+          animation="property: rotation; to: 0 405 0; loop: true; dur: 4000"
+          position="0 0 0"
+          class="clickable">
+        </a-entity>
+
+      </a-marker>
+
+      <!-- الكاميرا -->
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <!-- سكربت الروابط -->
+    <script>
+      // إذا المستخدم ضغط على المجسم، يفتح رابط معين
+      document.addEventListener("DOMContentLoaded", () => {
+        const model = document.querySelector("#model");
+        model.addEventListener("click", () => {
+          window.open("https://instagram.com/t.__x", "_blank");
+        });
+      });
+    </script>
+  </body>
+</html>
