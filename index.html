@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>AR 3D QR Cube</title>
+    <title>AR 3D Fixed Model</title>
     <style>
       body {
         margin: 0;
@@ -18,7 +18,7 @@
         --highlight: #00e0ff;
       }
 
-      /* ===== الأزرار الفخمة ===== */
+      /* ===== الأزرار الزجاجية ===== */
       .ui-buttons {
         position: fixed;
         top: 20px;
@@ -54,13 +54,13 @@
       }
     </style>
 
-    <!-- A-Frame & AR.js -->
+    <!-- مكتبات A-Frame و AR.js -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
   </head>
 
   <body>
-    <!-- 🌐 أزرار واجهة المستخدم -->
+    <!-- 🌐 واجهة الأزرار -->
     <div class="ui-buttons">
       <a class="fancy-btn" href="https://www.instagram.com/t.__x" target="_blank" rel="noopener noreferrer">
         Instagram
@@ -70,25 +70,21 @@
       </a>
     </div>
 
-    <!-- 🎯 مشهد الواقع المعزز -->
-    <a-scene
-      embedded
-      vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; debugUIEnabled: false;"
-    >
+    <!-- 🎯 مشهد AR -->
+    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
       <a-assets>
-        <!-- نموذجك -->
         <a-asset-item id="modelAsset" src="connor_rk900_-_detroit_become_human.glb"></a-asset-item>
       </a-assets>
 
       <a-marker id="marker" type="pattern" url="marker.patt">
+        <!-- المجسم -->
         <a-entity
           id="model"
           gltf-model="#modelAsset"
-          scale="0.5 0.5 0.5"
-          rotation="0 45 0"
-          animation="property: rotation; to: 0 405 0; loop: true; dur: 4000"
           position="0 0 0"
+          scale="0.15 0.15 0.15"
+          rotation="0 180 0"
+          animation-mixer
         ></a-entity>
       </a-marker>
 
@@ -98,16 +94,13 @@
     <script>
       const marker = document.querySelector("#marker");
       const model = document.querySelector("#model");
-
       let modelPlaced = false;
 
       marker.addEventListener("markerFound", () => {
         if (!modelPlaced) {
-          // انسخ الموقع والاتجاه من الماركر
           const pos = marker.object3D.position.clone();
           const rot = marker.object3D.rotation.clone();
 
-          // أضف المجسم مباشرة إلى المشهد بدل الماركر
           const scene = document.querySelector("a-scene");
           scene.object3D.add(model.object3D);
 
@@ -115,7 +108,7 @@
           model.object3D.rotation.copy(rot);
 
           modelPlaced = true;
-          console.log("✅ Model fixed in world position.");
+          console.log("✅ Model fixed and playing its built-in animation.");
         }
       });
     </script>
