@@ -1,105 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>AR 3D QR Cube</title>
-<style> 
-body {
-    background-color: rgb(4, 58, 94); }
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: rgb(4, 58, 94);
+        font-family: "Poppins", sans-serif;
+      }
 
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
-            --gold-gradient: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
-            --shadow-heavy: 0 15px 35px rgba(0, 0, 0, 0.3);
-            --border-radius: 15px;
-            --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-            @keyframes ripple {
-                to {
-                    transform: scale(4);
-                    opacity: 0;
-                }
-            }
-            
-            .fancy-btn {
-                position: relative;
-                overflow: hidden;
-            }
-        
-interactive-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin: 3rem 0;
-        }
+      :root {
+        --glass-bg: rgba(255, 255, 255, 0.08);
+        --glass-border: rgba(255, 255, 255, 0.18);
+        --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        --highlight: #00e0ff;
+      }
 
+      /* ===== الأزرار الفخمة ===== */
+      .ui-buttons {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 1rem;
+        z-index: 999;
+      }
 
-.fancy-btn {
-    position: relative;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-    overflow: hidden;
-    color: white;
-}
+      .fancy-btn {
+        padding: 12px 26px;
+        border-radius: 40px;
+        font-weight: 600;
+        color: white;
+        border: 1px solid var(--glass-border);
+        background: var(--glass-bg);
+        backdrop-filter: blur(10px);
+        text-decoration: none;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        transition: var(--transition-smooth);
+      }
 
-.btn-glass {
-    background: rgba(255,255,255,0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.2);
-}
-</style>
+      .fancy-btn:hover {
+        border-color: var(--highlight);
+        color: var(--highlight);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 40px rgba(0, 224, 255, 0.4);
+      }
 
-<a class="fancy-btn btn-glass" href="https://www.instagram.com/t.__x" target="_self">instagram</a>
-<a class="fancy-btn btn-glass" mailto="tammamosama101@gmail.com" target="_self">E-mail</a>
+      .fancy-btn:active {
+        transform: scale(0.97);
+      }
+    </style>
 
-    <!-- مكتبات A-Frame و AR.js -->
+    <!-- A-Frame & AR.js -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
   </head>
 
-  <body style="margin: 0; overflow: hidden;">
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
-      
-      <!-- الماركر (الـ QR أو العلامة) -->
-      <!-- يمكنك تغييره لاحقاً حسب الكود الخاص بك -->
-      <a-marker type="pattern" url="marker.patt">
+  <body>
+    <!-- 🌐 أزرار واجهة المستخدم -->
+    <div class="ui-buttons">
+      <a class="fancy-btn" href="https://www.instagram.com/t.__x" target="_blank" rel="noopener noreferrer">
+        Instagram
+      </a>
+      <a class="fancy-btn" href="mailto:tammamosama101@gmail.com">
+        E-mail
+      </a>
+    </div>
 
-        <!-- المجسم 3D -->
-        <a-entity 
+    <!-- 🎯 مشهد الواقع المعزز -->
+    <a-scene
+      embedded
+      vr-mode-ui="enabled: false"
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+    >
+      <a-assets>
+        <!-- نموذجك -->
+        <a-asset-item id="modelAsset" src="connor_rk900_-_detroit_become_human.glb"></a-asset-item>
+      </a-assets>
+
+      <a-marker id="marker" type="pattern" url="marker.patt">
+        <a-entity
           id="model"
-          gltf-model="connor_rk900_-_detroit_become_human.glb" 
+          gltf-model="#modelAsset"
           scale="0.5 0.5 0.5"
           rotation="0 45 0"
           animation="property: rotation; to: 0 405 0; loop: true; dur: 4000"
-          position="0 90 0"
-          class="clickable">
-        </a-entity>
-
+          position="0 0 0"
+        ></a-entity>
       </a-marker>
 
-      <!-- الكاميرا -->
       <a-entity camera></a-entity>
     </a-scene>
 
-    <!-- سكربت الروابط -->
     <script>
-      // إذا المستخدم ضغط على المجسم، يفتح رابط معين
-      document.addEventListener("DOMContentLoaded", () => {
-        const model = document.querySelector("#model");
-        model.addEventListener("click", () => {
-          window.open("https://instagram.com/t.__x", "_blank");
-        });
+      const marker = document.querySelector("#marker");
+      const model = document.querySelector("#model");
+
+      let modelPlaced = false;
+
+      marker.addEventListener("markerFound", () => {
+        if (!modelPlaced) {
+          // انسخ الموقع والاتجاه من الماركر
+          const pos = marker.object3D.position.clone();
+          const rot = marker.object3D.rotation.clone();
+
+          // أضف المجسم مباشرة إلى المشهد بدل الماركر
+          const scene = document.querySelector("a-scene");
+          scene.object3D.add(model.object3D);
+
+          model.object3D.position.copy(pos);
+          model.object3D.rotation.copy(rot);
+
+          modelPlaced = true;
+          console.log("✅ Model fixed in world position.");
+        }
       });
     </script>
   </body>
