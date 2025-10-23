@@ -2,7 +2,7 @@
 <html lang="ar">
 <head>
   <meta charset="utf-8" />
-  <title>AR – Promo (iOS Glass UI)</title>
+  <title>AR – Persistent Anchor (iOS Glass)</title>
 
   <!-- A-Frame + AR.js -->
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
@@ -12,20 +12,22 @@
   <style>
     :root{
       --glass-bg: rgba(255,255,255,0.10);
-      --glass-border: rgba(255,255,255,0.28);
+      --glass-border: rgba(255,255,255,0.25);
       --glass-hover: rgba(255,255,255,0.16);
       --accent: #00E5FF;
       --txt: #ffffff;
     }
     html,body{margin:0;height:100%;overflow:hidden;background:#000}
-    /* ====== شريط الأزرار الزجاجية (ثيم iOS) ====== */
+
+    /* أزرار iOS زجاجية – منتصف عمودي وانحياز يسار */
     .btns{
       position: fixed;
-      top: 14px;
-      right: 14px;
+      top: 50%;
+      left: 18px;
+      transform: translateY(-50%);
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       z-index: 9999;
       pointer-events: auto;
     }
@@ -33,15 +35,14 @@
       min-width: 210px;
       display: inline-flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       gap: 10px;
-      padding: 12px 16px;
+      padding: 13px 18px;
       color: var(--txt);
       text-decoration: none;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
+      font-family: -apple-system,BlinkMacSystemFont,"SF Pro",Segoe UI,Roboto,Arial,sans-serif;
       font-weight: 600;
       font-size: 15px;
-      line-height: 1;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       border-radius: 18px;
@@ -49,108 +50,142 @@
       -webkit-backdrop-filter: blur(14px) saturate(120%);
       box-shadow: 0 10px 35px rgba(0,0,0,0.35), inset 0 0 0.5px rgba(255,255,255,0.35);
       transition: transform .2s ease, background .2s ease, box-shadow .2s ease, border-color .2s ease;
-      will-change: transform;
     }
     .gbtn:hover{ background: var(--glass-hover); border-color: var(--accent); box-shadow: 0 12px 38px rgba(0,229,255,0.35); transform: translateY(-2px); }
     .gbtn:active{ transform: scale(0.98); }
-    .ico{width:18px;height:18px; display:inline-block; filter: drop-shadow(0 1px 0 rgba(0,0,0,.25)); }
-    /* شارة إرشاد خفيفة */
+    .ico{width:18px;height:18px;display:inline-block;filter:drop-shadow(0 1px 0 rgba(0,0,0,.25));}
+
     .hint{
-      position: fixed; left: 14px; top: 14px; z-index: 9998;
+      position: fixed; left: 14px; bottom: 18px; z-index: 9998;
       color: #cfefff; font: 500 13px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro",Segoe UI,Roboto,Arial;
       background: rgba(0, 42, 60, 0.55);
       border: 1px solid rgba(153, 232, 255, 0.25);
       padding: 10px 12px; border-radius: 12px;
       backdrop-filter: blur(10px);
-      max-width: 58vw;
+      max-width: 65vw;
     }
     @media(max-width:560px){
-      .gbtn{ min-width: 180px; font-size: 14px; padding: 11px 14px; }
-      .hint{ max-width: 80vw; font-size: 12px; }
+      .gbtn{ min-width: 190px; font-size: 14px; padding: 11px 14px; }
+      .hint{ font-size: 12px; max-width: 80vw; }
     }
   </style>
 </head>
 <body>
-  <!-- ====== واجهة تسويقية زجاجية (زر فوق زر) ====== -->
-  <div class="btns" aria-label="روابط تواصل">
+  <!-- أزرار تسويق -->
+  <div class="btns">
     <a class="gbtn" href="https://instagram.com/t.__x" target="_blank" rel="noopener">
-      <!-- أيقونة إنستا SVG خفيفة -->
-      <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" opacity="0.9"/>
-        <circle cx="12" cy="12" r="4.2" stroke="currentColor" opacity="0.9"/>
-        <circle cx="17.6" cy="6.6" r="1.3" fill="currentColor" opacity="0.9"/>
-      </svg>
+      <svg class="ico" viewBox="0 0 24 24" fill="none"><rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" opacity="0.9"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" opacity="0.9"/><circle cx="17.6" cy="6.6" r="1.3" fill="currentColor" opacity="0.9"/></svg>
       Instagram • t.__x
     </a>
     <a class="gbtn" href="mailto:tammamosama101@gmail.com">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" opacity="0.9"/>
-        <path d="M5 7l7 5 7-5" stroke="currentColor" opacity="0.9"/>
-      </svg>
+      <svg class="ico" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" opacity="0.9"/><path d="M5 7l7 5 7-5" stroke="currentColor" opacity="0.9"/></svg>
       E-mail • tammamosama101@gmail.com
     </a>
     <a class="gbtn" href="tel:+9647822911170">
-      <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M6.5 3h2l1.5 4-2 1.5a14 14 0 0 0 6.5 6.5L16 13.5l4 1.5v2c0 1-1 3-3 3A14.5 14.5 0 0 1 3 7c0-2 2-3 3.5-3Z" stroke="currentColor" opacity="0.9"/>
-      </svg>
+      <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M6.5 3h2l1.5 4-2 1.5a14 14 0 0 0 6.5 6.5L16 13.5l4 1.5v2c0 1-1 3-3 3A14.5 14.5 0 0 1 3 7c0-2 2-3 3.5-3Z" stroke="currentColor" opacity="0.9"/></svg>
       اتصال • 07822911170
+    </a>
+    <a class="gbtn" href="https://wa.me/9647822911170" target="_blank">
+      <svg class="ico" viewBox="0 0 24 24" fill="none"><path d="M12 2a9.9 9.9 0 0 0-8.9 14.4L2 22l5.7-1.8A9.9 9.9 0 1 0 12 2Z" stroke="currentColor" opacity="0.9"/><path d="M9.5 8c-.2.1-.5.5-.6.8-.1.4-.2.8.1 1.2.3.4.5.7.7 1l.3.4c.3.3.8.9 1.5 1.4.6.5 1.2.8 1.5.9.4.1.6.1.8-.1l.5-.6c.1-.1.2-.2.3-.3.1-.1.2-.2.4-.2.2 0 .3 0 .5.1l.6.3c.2.1.3.1.4.2.2.1.4.2.4.3.1.1.1.3 0 .5-.1.3-.3.7-.6 1-.4.5-1.1.8-1.9.7-1.1 0-2.3-.5-3.5-1.2-1-.7-2-1.7-2.8-2.8-.8-1.1-1.3-2.3-1.2-3.5 0-.8.2-1.5.7-1.9.3-.3.7-.5 1-.6.2 0 .3 0 .4.1.1.1.2.2.3.4.1.1.2.2.3.4.1.1.2.2.3.4.1.1.1.2 0 .4Z" fill="currentColor" opacity="0.9"/></svg>
+      WhatsApp • 07822911170
     </a>
   </div>
 
-  <div class="hint">اسمح للكاميرا ثم وجّهها على الماركر. للحصول على أفضل استجابة: إضاءة جيدة + ثبات اليد + اقتراب تدريجي من العلامة.</div>
+  <div class="hint">اسمح للكاميرا ثم وجّهها على الماركر. سنثبت المجسم بجانب الماركر عند أول اكتشاف لتقليل التقطيع.</div>
 
-  <!-- ====== مشهد AR مع تحسين استجابة التتبع ======
-       - رفع دقة مصدر الكاميرا (720p) لتحسين التعرف
-       - تفعيل smoothing بقيم متوازنة لتقليل الاهتزاز بدون بطء
-  -->
+  <!-- مشهد AR -->
   <a-scene
     embedded
     vr-mode-ui="enabled:false"
     renderer="logarithmicDepthBuffer:true; antialias:true"
     arjs="sourceType: webcam; sourceWidth:1280; sourceHeight:720; displayWidth:1280; displayHeight:720; detectionMode: mono; debugUIEnabled:false;">
     
-    <!-- الأصول -->
     <a-assets>
       <a-asset-item id="glb" src="connor_rk900_-_detroit_become_human.glb"></a-asset-item>
     </a-assets>
 
-    <!-- الماركر: حسّنّا السلاسة بدون تأخير ملحوظ -->
-    <a-marker
-      type="pattern"
-      url="marker.patt"
-      emitevents="true"
-      smooth="true"
-      smoothCount="100000"
-      smoothTolerance="0.01"
-      smoothThreshold="2">
-      
-      <!-- الموديل (إحداثياتك المخصصة) -->
-      <a-entity id="model"
-        gltf-model="#glb"
-        position="-0.86 0 -0.12"
-        rotation="180 -158 -180"
-        scale="2 2 2"
-        animation-mixer>
-      </a-entity>
+    <!-- الماركر: خليّنا smoothing OFF لتسريع الالتقاط -->
+    <a-marker id="marker" type="pattern" url="marker.patt" emitevents="true" smooth="false" hide-on-lost="false">
+      <!-- ملاحظة: ما راح نعرض الموديل كابن للماركر حتى نتفادى الفليكر.
+           راح نثبته عالمياً بجانب الماركر عبر جافاسكربت ثم نخليه خارج الماركر. -->
     </a-marker>
 
-    <!-- الكاميرا -->
+    <!-- حامل الموديل الحر (خارج الماركر) -->
+    <a-entity id="anchor"></a-entity>
+
     <a-entity camera></a-entity>
   </a-scene>
 
   <script>
-    // تحسّب: إذا AR.js أخفق بفتح الكاميرا (رفض إذن/جهاز غير مدعوم)،
-    // نعرض رسالة لطيفة بدل الصمت.
-    window.addEventListener('camera-init', () => console.log('✅ Camera initialized'));
-    window.addEventListener('camera-error', (e) => {
-      alert('تعذر تشغيل الكاميرا. تأكد من منح الإذن واستخدم Chrome/Safari مع HTTPS.');
-      console.error(e);
+    // إعداداتك الأساسية (ممكن تغيّرها إذا تريد)
+    const DESIRED_ROT = new THREE.Euler(THREE.MathUtils.degToRad(180), THREE.MathUtils.degToRad(-158), THREE.MathUtils.degToRad(-180), 'XYZ');
+    const DESIRED_SCALE = new THREE.Vector3(1.18, 1.18, 1.18);
+
+    // انحراف جانبي بالنسبة لمحاور الماركر (يمين الماركر بمقدار ~0.6 م)
+    const SIDE_OFFSET = 0.6;  // كبّره/صغّره إذا تريد قرب/بعد أكثر
+    const UP_OFFSET = 0.0;    // تقدر ترفع شوي فوق سطح الماركر
+
+    const sceneEl = document.querySelector('a-scene');
+    const anchor = document.querySelector('#anchor');
+    const marker = document.querySelector('#marker');
+
+    // نبني الموديل كطفل للـ anchor (مو للماركر)
+    const model = document.createElement('a-entity');
+    model.setAttribute('id', 'model');
+    model.setAttribute('gltf-model', '#glb');
+    model.setAttribute('visible', 'false'); // يبقى مخفي لحد ما نثبت مكانه
+    anchor.appendChild(model);
+
+    let anchored = false;
+
+    // دالة تعمل عند أول التقاط للماركر: نثبت الموديل بجانب الماركر ونظل نعرضه حتى لو فُقد
+    marker.addEventListener('markerFound', () => {
+      if (anchored) return;
+
+      const markerObj = marker.object3D;
+      markerObj.updateMatrixWorld(true);
+
+      // موضع واتجاه الماركر بالعالم
+      const markerWorldPos = new THREE.Vector3();
+      const markerWorldQuat = new THREE.Quaternion();
+      const markerWorldScale = new THREE.Vector3();
+      markerObj.matrixWorld.decompose(markerWorldPos, markerWorldQuat, markerWorldScale);
+
+      // متجه "اليمين" بالنسبة للماركر (المحور X بعد الدوران)
+      const right = new THREE.Vector3(1, 0, 0).applyQuaternion(markerWorldQuat).normalize();
+      const up = new THREE.Vector3(0, 1, 0).applyQuaternion(markerWorldQuat).normalize();
+
+      // احسب مكان التثبيت: يمين الماركر + رفع اختياري
+      const worldPos = markerWorldPos.clone().addScaledVector(right, SIDE_OFFSET).addScaledVector(up, UP_OFFSET);
+
+      // طبّق الموضع/الدوران/الحجم على الموديل الحر
+      const modelObj = model.object3D;
+      modelObj.position.copy(worldPos);
+      modelObj.quaternion.copy(markerWorldQuat);  // يخلي اتجاهه مثل اتجاه الماركر
+      modelObj.rotation.setFromQuaternion(modelObj.quaternion, 'XYZ');
+
+      // فوق اتجاه الماركر، نطبّق تهيئة دورانك المحددة
+      modelObj.rotation.x = DESIRED_ROT.x;
+      modelObj.rotation.y = DESIRED_ROT.y;
+      modelObj.rotation.z = DESIRED_ROT.z;
+
+      modelObj.scale.copy(DESIRED_SCALE);
+
+      model.setAttribute('visible', 'true');
+      anchored = true;
+      console.log('✅ Anchored beside marker (persistent).');
     });
 
-    // ملاحظة: الأزرار فوق المشهد z-index عالي و pointer-events فعّالة،
-    // حتى لا يمنعها طبقة WebGL من الاستجابة للضغط.
+    // ما نسوّي شي عند markerLost — نخلي الموديل ظاهر وثابت
+    marker.addEventListener('markerLost', () => {
+      console.log('ℹ️ Marker lost — model remains visible at anchored pose.');
+    });
+
+    // أخطاء الكاميرا
+    window.addEventListener('camera-error', e=>{
+      alert('⚠️ تعذّر الوصول للكاميرا.\nتأكد من الإذن واستخدم Chrome/Safari عبر HTTPS.');
+      console.error(e);
+    });
   </script>
 </body>
 </html>
-
-
