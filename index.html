@@ -86,21 +86,33 @@
       -webkit-backdrop-filter: blur(18px) saturate(160%);
     }
 
-    .toast button {
-      margin-left: auto;
+    .toast-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
       margin-right: -6px;
+      margin-left: auto;
+    }
+
+    .toast button {
       border: none;
       background: rgba(255, 255, 255, 0.15);
       color: inherit;
       font-weight: 600;
       border-radius: 14px;
-      padding: 6px 10px;
+      padding: 6px 12px;
       cursor: pointer;
     }
 
     .toast button:hover,
     .toast button:focus-visible {
       background: rgba(255, 255, 255, 0.28);
+    }
+
+    .toast[data-status="granted"] {
+      background: rgba(40, 167, 69, 0.28);
+      border-color: rgba(175, 255, 210, 0.55);
+      color: #e8fff3;
     }
 
     @media (max-width: 720px) {
@@ -146,8 +158,11 @@
   </nav>
 
   <div id="cameraToast" class="toast" role="status" aria-live="polite">
-    <span>أعطِ صلاحية استخدام الكاميرا ثم وجّهها نحو رمز الـ QR/ArUco لرؤية المجسّم.</span>
-    <button type="button" aria-label="إغلاق التنبيه">تم</button>
+    <span id="cameraToastText">أعطِ صلاحية استخدام الكاميرا ثم وجّهها نحو رمز الـ QR/ArUco لرؤية المجسّم.</span>
+    <div class="toast-actions">
+      <button type="button" id="cameraRequest">السماح الآن</button>
+      <button type="button" id="cameraDismiss" aria-label="إغلاق التنبيه">إخفاء</button>
+    </div>
   </div>
 
   <!-- مشهد الواقع المعزّز -->
@@ -212,22 +227,64 @@
     });
 
     const toast = document.getElementById('cameraToast');
-    toast?.querySelector('button')?.addEventListener('click', () => {
+    const toastText = document.getElementById('cameraToastText');
+    const requestBtn = document.getElementById('cameraRequest');
+    const dismissBtn = document.getElementById('cameraDismiss');
+
+    const closeToast = () => {
+      if (!toast) return;
       toast.style.opacity = '0';
       toast.style.pointerEvents = 'none';
       setTimeout(() => toast.remove(), 400);
-    });
+    };
+
+    dismissBtn?.addEventListener('click', closeToast);
+
+    async function requestCameraAccess(triggeredByUser = false) {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        toastText?.textContent = '⚠️ المتصفح لا يدعم الوصول للكاميرا تلقائياً. استخدم متصفحاً محدثاً أو اضغط على زر السماح.';
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        });
+
+        stream.getTracks().forEach((track) => track.stop());
+        if (toast) {
+          toast.dataset.status = 'granted';
+        }
+        toastText?.textContent = '✅ تم منح صلاحية الكاميرا، سيتم تشغيل المشهد فور التوجيه نحو رمز الـ QR.';
+        if (triggeredByUser) {
+          setTimeout(closeToast, 1800);
+        }
+      } catch (error) {
+        console.warn('تعذّر طلب صلاحية الكاميرا مسبقاً:', error);
+        if (!triggeredByUser) {
+          toastText?.textContent = 'اضغط على "السماح الآن" لتسريع فتح الكاميرا، أو تأكد من منح الإذن من إعدادات المتصفح.';
+        }
+      }
+    }
+
+    requestBtn?.addEventListener('click', () => requestCameraAccess(true));
 
     window.addEventListener('camera-error', (event) => {
       alert('⚠️ تعذّر الوصول للكاميرا.\nتأكد من إعطاء الإذن واستخدام HTTPS (مثلاً GitHub Pages).');
       console.error(event);
     });
 
-    // إن أراد المستخدم بدء طلب الإذن مباشرة فور فتح الصفحة (يساعد في تسريع الاستجابة)
-    if (navigator.mediaDevices?.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true }).catch(() => {
-        /* نترك AR.js يتعامل مع الأخطاء */
-      });
+    // محاولة طلب الإذن فور تحميل الصفحة لتسريع استجابة العميل
+    const prewarmCamera = () => requestAnimationFrame(() => requestCameraAccess(false));
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      prewarmCamera();
+    } else {
+      window.addEventListener('DOMContentLoaded', prewarmCamera, { once: true });
     }
   </script>
 
