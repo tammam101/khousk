@@ -2,142 +2,50 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8" />
-  <title>تجربة AR مع ماركر ArUco</title>
+  <title>WebAR — ArUco ثابت بجانب الماركر</title>
 
-  <!-- المكتبات الضرورية -->
+  <!-- مكتبات A-Frame + AR.js -->
   <link rel="preconnect" href="https://aframe.io" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <script defer src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
-  <script defer src="app.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <style>
-    :root {
+    :root{
       color-scheme: dark;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Arial, sans-serif;
+      --glass-bg: rgba(255,255,255,.10);
+      --glass-brd: rgba(255,255,255,.26);
+      --txt: #fff;
     }
+    html,body{margin:0;height:100%;overflow:hidden;background:#000;font-family:-apple-system,BlinkMacSystemFont,"SF Pro",Segoe UI,Roboto,Arial}
+    /* إلغاء شاشة التحميل الافتراضية (الخلفية الزرقاء والنقاط) */
+    .a-loader-title, .a-loader{ display:none !important; }
 
-    html, body {
-      margin: 0;
-      height: 100%;
-      overflow: hidden;
-      background: #000;
-    }
+    /* أزرار زجاجية (يسار/منتصف عمودياً) */
+    .btns{position:fixed;top:50%;left:18px;transform:translateY(-50%);display:flex;flex-direction:column;gap:12px;z-index:4}
+    .gbtn{min-width:220px;display:inline-flex;align-items:center;gap:10px;padding:13px 18px;color:var(--txt);text-decoration:none;font-weight:700;font-size:15px;
+      background:var(--glass-bg);border:1px solid var(--glass-brd);border-radius:20px;backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%)}
+    .ico{width:20px;height:20px}
 
-    .btns {
-      position: fixed;
-      top: 50%;
-      left: 18px;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      z-index: 4;
-    }
+    /* Toast إرشادي خفيف */
+    .toast{position:fixed;right:16px;bottom:16px;z-index:5;max-width:min(320px,80vw);padding:12px 14px;border-radius:16px;
+      color:#e7f5ff;background:rgba(13,110,253,.25);border:1px solid rgba(115,189,255,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+    .toast button{margin-inline-start:10px;border:0;background:rgba(255,255,255,.18);color:inherit;padding:6px 10px;border-radius:12px;cursor:pointer}
 
-    .gbtn {
-      min-width: 220px;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 13px 18px;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 15px;
-      letter-spacing: -0.2px;
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
-      border: 1px solid rgba(255, 255, 255, 0.26);
-      border-radius: 20px;
-      box-shadow: 0 12px 30px rgba(12, 19, 31, 0.35);
-      backdrop-filter: blur(16px) saturate(140%);
-      -webkit-backdrop-filter: blur(16px) saturate(140%);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
+    /* زر بدء صريح لضمان طلب الإذن على كل الأجهزة */
+    .startOverlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);z-index:6}
+    .startOverlay button{padding:14px 22px;font-weight:800;font-size:16px;color:#fff;background:var(--glass-bg);border:1px solid var(--glass-brd);
+      border-radius:16px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);cursor:pointer}
 
-    .gbtn:hover,
-    .gbtn:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: 0 18px 40px rgba(12, 19, 31, 0.45);
-    }
-
-    .ico {
-      width: 20px;
-      height: 20px;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 16px;
-      right: 16px;
-      z-index: 5;
-      max-width: min(320px, 80vw);
-      padding: 14px 16px;
-      border-radius: 18px;
-      background: rgba(13, 110, 253, 0.25);
-      border: 1px solid rgba(115, 189, 255, 0.4);
-      color: #e7f5ff;
-      font-size: 14px;
-      line-height: 1.5;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      backdrop-filter: blur(18px) saturate(160%);
-      -webkit-backdrop-filter: blur(18px) saturate(160%);
-    }
-
-    .toast-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-right: -6px;
-      margin-left: auto;
-    }
-
-    .toast button {
-      border: none;
-      background: rgba(255, 255, 255, 0.15);
-      color: inherit;
-      font-weight: 600;
-      border-radius: 14px;
-      padding: 6px 12px;
-      cursor: pointer;
-    }
-
-    .toast button:hover,
-    .toast button:focus-visible {
-      background: rgba(255, 255, 255, 0.28);
-    }
-
-    .toast[data-status="granted"] {
-      background: rgba(40, 167, 69, 0.28);
-      border-color: rgba(175, 255, 210, 0.55);
-      color: #e8fff3;
-    }
-
-    @media (max-width: 720px) {
-      .btns {
-        top: auto;
-        bottom: 18px;
-        left: 50%;
-        transform: translateX(-50%);
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        padding: 0 12px;
-      }
-
-      .gbtn {
-        min-width: min(220px, 42vw);
-        justify-content: center;
-        padding-inline: 16px;
-      }
+    @media(max-width:720px){
+      .btns{top:auto;bottom:18px;left:50%;transform:translateX(-50%);flex-direction:row;flex-wrap:wrap;gap:10px}
+      .gbtn{min-width:min(220px,42vw);justify-content:center}
     }
   </style>
 </head>
 <body>
+
   <!-- أزرار التسويق -->
   <nav class="btns" aria-label="روابط التواصل">
     <a class="gbtn" href="https://instagram.com/t.__x" target="_blank" rel="noopener">
@@ -158,41 +66,42 @@
     </a>
   </nav>
 
-  <div id="cameraToast" class="toast" role="status" aria-live="polite">
-    <span id="cameraToastText">أعطِ صلاحية استخدام الكاميرا ثم وجّهها نحو رمز الـ QR/ArUco لرؤية المجسّم.</span>
-    <div class="toast-actions">
-      <button type="button" id="cameraRequest">السماح الآن</button>
-      <button type="button" id="cameraDismiss" aria-label="إغلاق التنبيه">إخفاء</button>
-    </div>
+  <!-- تنبيه بسيط -->
+  <div id="toast" class="toast" role="status" aria-live="polite">
+    اسمح للكاميرا، ثم وجّهها نحو ماركر ArUco رقم 5 — المجسّم سيظهر على يمين الماركر وبحجم أكبر.
+    <button type="button">تم</button>
   </div>
 
-  <!-- مشهد الواقع المعزّز -->
+  <!-- زر بدء لضمان طلب الإذن على كل الأجهزة/المتصفحات -->
+  <div id="start" class="startOverlay" hidden>
+    <button type="button" id="startBtn">ابدأ الواقع المعزّز</button>
+  </div>
+
+  <!-- مشهد AR — بدون شاشة تحميل، خلفية شفافة حتى ما تشوف لون أزرق -->
   <a-scene
     embedded
+    loading-screen="enabled:false"
     vr-mode-ui="enabled:false"
     renderer="alpha:true; antialias:true; logarithmicDepthBuffer:true"
-    arjs="sourceType: webcam; sourceWidth: 720; sourceHeight: 540; displayWidth: 720; displayHeight: 540; trackingMethod: best; detectionMode: mono; debugUIEnabled:false;">
-
+    arjs="sourceType: webcam; sourceWidth:640; sourceHeight:480; displayWidth:640; displayHeight:480; trackingMethod: best; detectionMode: mono; debugUIEnabled:false;">
+    
     <a-assets timeout="60000">
+      <!-- بدّل اسم الملف إذا لزم -->
       <a-asset-item id="glb" src="3d-1.glb"></a-asset-item>
     </a-assets>
 
-    <a-marker
-      id="markerRoot"
-      type="barcode"
-      value="5"
+    <!-- ماركر ArUco (barcode) رقم 5 — size بالمتر (0.16 = 16 سم) -->
+    <a-marker id="markerRoot"
+      type="barcode" value="5" size="0.16"
       emitevents="true"
-      size="0.16"
-      smooth="true"
-      smoothCount="5"
-      smoothTolerance="0.01"
-      smoothThreshold="2">
+      hide-on-lost="false"
+      smooth="true" smoothCount="5" smoothTolerance="0.01" smoothThreshold="2">
 
-      <a-entity
-        id="model"
+      <!-- الموديل: سنضبط موقعه/حجمه نسبياً لحجم الماركر -->
+      <a-entity id="model"
         gltf-model="#glb"
         rotation="0 0 0"
-        relative-to-marker="marker: #markerRoot; offset: 0.65 0 0; scale-multiplier: 1.25"
+        relative-to-marker="marker: #markerRoot; offset: 0.65 0 0; scale-multiplier: 1.35"
         animation-mixer>
       </a-entity>
     </a-marker>
@@ -200,13 +109,57 @@
     <a-entity camera></a-entity>
   </a-scene>
 
+  <script>
+    // كومبوننت يربط الموديل بحجم/موضع الماركر: offset على يمين الماركر، وحجم أكبر
+    AFRAME.registerComponent('relative-to-marker', {
+      schema: {
+        marker: { type: 'selector' },
+        offset: { type: 'vec3', default: { x: 0.65, y: 0, z: 0 } }, // يمين الماركر
+        'scale-multiplier': { type: 'number', default: 1.35 }       // أكبر من الماركر
+      },
+      tick: function () {
+        const m = this.data.marker && this.data.marker.object3D;
+        if (!m) return;
+        const s = m.scale, o = this.data.offset, k = this.data['scale-multiplier'];
+        // الحجم يتبع حجم الماركر (لمحاذاة واقعية)
+        this.el.object3D.scale.set(s.x * k, s.y * k, s.z * k);
+        // الموضع يمين الماركر (محور X بعد التحجيم)
+        this.el.object3D.position.set(o.x * s.x, o.y * s.y, o.z * s.z);
+      }
+    });
+
+    // إزالة التوست
+    (document.querySelector('#toast')?.querySelector('button')||{}).onclick = () => {
+      const t = document.getElementById('toast'); t.style.opacity='0'; t.style.pointerEvents='none'; setTimeout(()=>t.remove(), 300);
+    };
+
+    // ضمان طلب الإذن: إذا ما ظهر تلقائياً، أظهر زر "ابدأ" واستعمل getUserMedia بلمسة المستخدم
+    function ensureCameraPrompt(){
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return;
+      // نحاول طلب إذن سريعاً؛ إذا رفض/تعثّر، نظهر زر البدء
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(stream => { stream.getTracks().forEach(t=>t.stop()); })
+        .catch(()=> document.getElementById('start').hidden = false);
+    }
+    document.addEventListener('DOMContentLoaded', ensureCameraPrompt);
+    document.getElementById('startBtn').onclick = () => {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(s => { s.getTracks().forEach(t=>t.stop()); document.getElementById('start').hidden = true; })
+        .catch(() => alert('⚠️ تعذّر الوصول للكاميرا. تأكد من الإذن وHTTPS.'));
+    };
+
+    // تنبيه أخطاء الكاميرا من AR.js
+    window.addEventListener('camera-error', e=>{
+      alert('⚠️ تعذّر الوصول للكاميرا.\nتأكد من منح الإذن واستخدم Chrome/Safari عبر HTTPS.');
+      console.error(e);
+    });
+  </script>
+
   <!--
-    🔧 تعليمات إنشاء ورفع ماركر ArUco/AprilTag:
-      1. افتح مولّد ماركر ArUco مثل: https://chev.me/arucogen/ أو https://calibration.ft.unicamp.br/artoolkit/barcode-marker-generator/ .
-      2. اختر قيمة رقمية (مثلاً 5 كما في الكود) واطبع/احفظ صورة الماركر بصيغة PNG أو PDF.
-      3. ضع الصورة على رمز QR الخاص بك أو بجواره، واحرص أن تكون الحواف واضحة التباين.
-      4. إذا غيّرت الرقم، عدّل الخاصية value في <a-marker> لنفس الرقم.
-      5. أحجام الطباعة القياسية 16 سم → غيّر الخاصية size في <a-marker> إذا استخدمت مقاساً آخر (المقاس بالمتر).
+    ملاحظات:
+    • اطبع ماركر ArUco بقيمة 5 (نفس value) وبحجم 16 سم أو عدّل size بالمتر.
+    • عدّل offset داخل relative-to-marker للتحريك: يمين (+X)، يسار (−X)، أمام (−Z)، خلف (+Z).
+    • إن كان الموديل صغير/كبير زيادة، عدّل scale-multiplier (مثلاً 1.8 أو 2).
   -->
 </body>
 </html>
