@@ -2,7 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>AR 3D Fixed Model</title>
+    <title>AR 3D Connor RK900</title>
+
+    <!-- 🎨 التنسيق العام -->
     <style>
       body {
         margin: 0;
@@ -14,11 +16,11 @@
       :root {
         --glass-bg: rgba(255, 255, 255, 0.08);
         --glass-border: rgba(255, 255, 255, 0.18);
-        --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         --highlight: #00e0ff;
+        --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
       }
 
-      /* ===== الأزرار الزجاجية ===== */
+      /* 🌐 أزرار الواجهة الزجاجية */
       .ui-buttons {
         position: fixed;
         top: 20px;
@@ -30,13 +32,13 @@
       }
 
       .fancy-btn {
-        padding: 12px 26px;
+        padding: 12px 28px;
         border-radius: 40px;
         font-weight: 600;
         color: white;
         border: 1px solid var(--glass-border);
         background: var(--glass-bg);
-        backdrop-filter: blur(10px);
+        backdrop-filter: blur(12px);
         text-decoration: none;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
         transition: var(--transition-smooth);
@@ -54,13 +56,13 @@
       }
     </style>
 
-    <!-- مكتبات A-Frame و AR.js -->
+    <!-- 📦 مكتبات A-Frame و AR.js -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
   </head>
 
   <body>
-    <!-- 🌐 واجهة الأزرار -->
+    <!-- 🌐 أزرار التحكم -->
     <div class="ui-buttons">
       <a class="fancy-btn" href="https://www.instagram.com/t.__x" target="_blank" rel="noopener noreferrer">
         Instagram
@@ -70,50 +72,54 @@
       </a>
     </div>
 
-    <!-- 🎯 مشهد AR -->
-    <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <!-- 🎯 مشهد الواقع المعزز -->
+    <a-scene
+      embedded
+      vr-mode-ui="enabled: false"
+      arjs="sourceType: webcam; debugUIEnabled: false; detectionMode: mono;"
+    >
+      <!-- تحميل المجسم -->
       <a-assets>
         <a-asset-item id="modelAsset" src="connor_rk900_-_detroit_become_human.glb"></a-asset-item>
       </a-assets>
 
+      <!-- الماركر -->
       <a-marker id="marker" type="pattern" url="marker.patt">
-        <!-- المجسم -->
         <a-entity
           id="model"
           gltf-model="#modelAsset"
-          position="0 -1 -1"
-          scale="3 3 5"
+          position="0 0 0"
           rotation="0 180 0"
+          scale="0.6 0.6 0.6"
           animation-mixer
         ></a-entity>
       </a-marker>
 
+      <!-- الكاميرا -->
       <a-entity camera></a-entity>
     </a-scene>
 
+    <!-- 🔧 تثبيت المجسم بعد ظهور الماركر -->
     <script>
       const marker = document.querySelector("#marker");
       const model = document.querySelector("#model");
-      let modelPlaced = false;
+      let modelFixed = false;
 
       marker.addEventListener("markerFound", () => {
-        if (!modelPlaced) {
+        if (!modelFixed) {
+          // أخذ موقع الماركر والاحتفاظ به
+          const scene = document.querySelector("a-scene");
           const pos = marker.object3D.position.clone();
           const rot = marker.object3D.rotation.clone();
 
-          const scene = document.querySelector("a-scene");
           scene.object3D.add(model.object3D);
-
           model.object3D.position.copy(pos);
           model.object3D.rotation.copy(rot);
 
-          modelPlaced = true;
-          console.log("✅ Model fixed and playing its built-in animation.");
+          modelFixed = true;
+          console.log("✅ Model fixed at marker position and animation active.");
         }
       });
     </script>
   </body>
 </html>
-
-
-
