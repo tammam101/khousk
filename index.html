@@ -1,128 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <title>AR 3D Connor RK900</title>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        background-color: rgb(4, 58, 94);
-        font-family: "Poppins", sans-serif;
-      }
+<html lang="ar">
+<head>
+  <meta charset="utf-8" />
+  <title>AR – Promo (iOS Glass UI)</title>
 
-      :root {
-        --glass-bg: rgba(255, 255, 255, 0.08);
-        --glass-border: rgba(255, 255, 255, 0.18);
-        --highlight: #00e0ff;
-        --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      }
+  <!-- A-Frame + AR.js -->
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
 
-      /* 🔷 أزرار فاخرة */
-      .ui-buttons {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 1rem;
-        z-index: 999;
-      }
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <style>
+    :root{
+      --glass-bg: rgba(255,255,255,0.10);
+      --glass-border: rgba(255,255,255,0.28);
+      --glass-hover: rgba(255,255,255,0.16);
+      --accent: #00E5FF;
+      --txt: #ffffff;
+    }
+    html,body{margin:0;height:100%;overflow:hidden;background:#000}
+    /* ====== شريط الأزرار الزجاجية (ثيم iOS) ====== */
+    .btns{
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 9999;
+      pointer-events: auto;
+    }
+    .gbtn{
+      min-width: 210px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 16px;
+      color: var(--txt);
+      text-decoration: none;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      line-height: 1;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 18px;
+      backdrop-filter: blur(14px) saturate(120%);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.35), inset 0 0 0.5px rgba(255,255,255,0.35);
+      transition: transform .2s ease, background .2s ease, box-shadow .2s ease, border-color .2s ease;
+      will-change: transform;
+    }
+    .gbtn:hover{ background: var(--glass-hover); border-color: var(--accent); box-shadow: 0 12px 38px rgba(0,229,255,0.35); transform: translateY(-2px); }
+    .gbtn:active{ transform: scale(0.98); }
+    .ico{width:18px;height:18px; display:inline-block; filter: drop-shadow(0 1px 0 rgba(0,0,0,.25)); }
+    /* شارة إرشاد خفيفة */
+    .hint{
+      position: fixed; left: 14px; top: 14px; z-index: 9998;
+      color: #cfefff; font: 500 13px/1.2 -apple-system,BlinkMacSystemFont,"SF Pro",Segoe UI,Roboto,Arial;
+      background: rgba(0, 42, 60, 0.55);
+      border: 1px solid rgba(153, 232, 255, 0.25);
+      padding: 10px 12px; border-radius: 12px;
+      backdrop-filter: blur(10px);
+      max-width: 58vw;
+    }
+    @media(max-width:560px){
+      .gbtn{ min-width: 180px; font-size: 14px; padding: 11px 14px; }
+      .hint{ max-width: 80vw; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- ====== واجهة تسويقية زجاجية (زر فوق زر) ====== -->
+  <div class="btns" aria-label="روابط تواصل">
+    <a class="gbtn" href="https://instagram.com/t.__x" target="_blank" rel="noopener">
+      <!-- أيقونة إنستا SVG خفيفة -->
+      <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" opacity="0.9"/>
+        <circle cx="12" cy="12" r="4.2" stroke="currentColor" opacity="0.9"/>
+        <circle cx="17.6" cy="6.6" r="1.3" fill="currentColor" opacity="0.9"/>
+      </svg>
+      Instagram • t.__x
+    </a>
+    <a class="gbtn" href="mailto:tammamosama101@gmail.com">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="14" rx="3" stroke="currentColor" opacity="0.9"/>
+        <path d="M5 7l7 5 7-5" stroke="currentColor" opacity="0.9"/>
+      </svg>
+      E-mail • tammamosama101@gmail.com
+    </a>
+    <a class="gbtn" href="tel:+9647822911170">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6.5 3h2l1.5 4-2 1.5a14 14 0 0 0 6.5 6.5L16 13.5l4 1.5v2c0 1-1 3-3 3A14.5 14.5 0 0 1 3 7c0-2 2-3 3.5-3Z" stroke="currentColor" opacity="0.9"/>
+      </svg>
+      اتصال • 07822911170
+    </a>
+  </div>
 
-      .fancy-btn {
-        padding: 12px 28px;
-        border-radius: 40px;
-        font-weight: 600;
-        color: white;
-        border: 1px solid var(--glass-border);
-        background: var(--glass-bg);
-        backdrop-filter: blur(12px);
-        text-decoration: none;
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
-        transition: var(--transition-smooth);
-      }
+  <div class="hint">اسمح للكاميرا ثم وجّهها على الماركر. للحصول على أفضل استجابة: إضاءة جيدة + ثبات اليد + اقتراب تدريجي من العلامة.</div>
 
-      .fancy-btn:hover {
-        border-color: var(--highlight);
-        color: var(--highlight);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 40px rgba(0, 224, 255, 0.4);
-      }
+  <!-- ====== مشهد AR مع تحسين استجابة التتبع ======
+       - رفع دقة مصدر الكاميرا (720p) لتحسين التعرف
+       - تفعيل smoothing بقيم متوازنة لتقليل الاهتزاز بدون بطء
+  -->
+  <a-scene
+    embedded
+    vr-mode-ui="enabled:false"
+    renderer="logarithmicDepthBuffer:true; antialias:true"
+    arjs="sourceType: webcam; sourceWidth:1280; sourceHeight:720; displayWidth:1280; displayHeight:720; detectionMode: mono; debugUIEnabled:false;">
+    
+    <!-- الأصول -->
+    <a-assets>
+      <a-asset-item id="glb" src="free_droide_de_seguridad_k-2so_by_oscar_creativo.glb"></a-asset-item>
+    </a-assets>
 
-      .fancy-btn:active {
-        transform: scale(0.97);
-      }
-    </style>
+    <!-- الماركر: حسّنّا السلاسة بدون تأخير ملحوظ -->
+    <a-marker
+      type="pattern"
+      url="marker.patt"
+      emitevents="true"
+      smooth="true"
+      smoothCount="5"
+      smoothTolerance="0.01"
+      smoothThreshold="2">
+      
+      <!-- الموديل (إحداثياتك المخصصة) -->
+      <a-entity id="model"
+        gltf-model="#glb"
+        position="-0.86 0 -0.12"
+        rotation="180 -158 -180"
+        scale="1.18 1.18 1.18"
+        animation-mixer>
+      </a-entity>
+    </a-marker>
 
-    <!-- مكتبات -->
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
-  </head>
+    <!-- الكاميرا -->
+    <a-entity camera></a-entity>
+  </a-scene>
 
-  <body>
-    <!-- 🧊 أزرار الشاشة -->
-    <div class="ui-buttons">
-      <a class="fancy-btn" href="https://www.instagram.com/t.__x" target="_blank">Instagram</a>
-      <a class="fancy-btn" href="mailto:tammamosama101@gmail.com">E-mail</a>
-    </div>
+  <script>
+    // تحسّب: إذا AR.js أخفق بفتح الكاميرا (رفض إذن/جهاز غير مدعوم)،
+    // نعرض رسالة لطيفة بدل الصمت.
+    window.addEventListener('camera-init', () => console.log('✅ Camera initialized'));
+    window.addEventListener('camera-error', (e) => {
+      alert('تعذر تشغيل الكاميرا. تأكد من منح الإذن واستخدم Chrome/Safari مع HTTPS.');
+      console.error(e);
+    });
 
-    <!-- 🧩 مشهد AR -->
-    <a-scene
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false; trackingMethod: best; detectionMode: mono;"
-      vr-mode-ui="enabled: false"
-      renderer="logarithmicDepthBuffer: true; antialias: true;"
-    >
-      <a-assets>
-        <a-asset-item id="modelAsset" src="connor_rk900_-_detroit_become_human.glb"></a-asset-item>
-      </a-assets>
-
-      <!-- الماركر -->
-      <a-marker
-        id="marker"
-        type="pattern"
-        url="marker.patt"
-        smooth="true"
-        smoothCount="10"
-        smoothTolerance="0.01"
-        smoothThreshold="5"
-        emitevents="true"
-        hide-on-lost="false"
-      >
-        <!-- المجسم مثبت على الماركر الحقيقي -->
-        <a-entity
-          id="model"
-          gltf-model="#modelAsset"
-          position="0 0 0"
-          rotation="0 90 0"
-          scale="0.1 0.1 0.1"
-          animation-mixer
-        ></a-entity>
-      </a-marker>
-
-      <!-- الكاميرا -->
-      <a-entity camera></a-entity>
-    </a-scene>
-
-    <script>
-      const marker = document.querySelector("#marker");
-      const model = document.querySelector("#model");
-
-      // المجسم ما يختفي لو فقدنا الماركر
-      marker.addEventListener("markerFound", () => {
-        console.log("✅ Marker found: Model visible and locked in place.");
-        model.setAttribute("visible", true);
-      });
-
-      marker.addEventListener("markerLost", () => {
-        console.log("⚠ Marker lost: Model stays in the same real-world position.");
-        // يبقى ظاهر بنفس موقع آخر مرة انشاف بيها الماركر
-      });
-    </script>
-  </body>
+    // ملاحظة: الأزرار فوق المشهد z-index عالي و pointer-events فعّالة،
+    // حتى لا يمنعها طبقة WebGL من الاستجابة للضغط.
+  </script>
+</body>
 </html>
-
-
-
-
-
